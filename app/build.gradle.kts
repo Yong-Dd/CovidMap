@@ -29,11 +29,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
     buildFeatures {
         viewBinding = true
@@ -58,6 +58,11 @@ dependencies {
     // coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
 
+    // room
+    val room_version = "2.5.2"
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+
     // naver map
     implementation("com.naver.maps:map-sdk:3.17.0")
 
@@ -70,6 +75,9 @@ dependencies {
 
     // 권한 요청 (tedpermission)
     implementation("io.github.ParkSangGwon:tedpermission-normal:3.3.0")
+
+    // lottie
+    implementation("com.airbnb.android:lottie:6.1.0")
 
 }
 
