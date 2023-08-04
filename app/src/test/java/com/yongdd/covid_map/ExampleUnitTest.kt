@@ -1,4 +1,4 @@
-package com.example.covid_map
+package com.yongdd.covid_map
 
 import org.junit.Test
 

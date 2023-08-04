@@ -1,4 +1,4 @@
-package com.example.covid_map
+package com.yongdd.covid_map
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
