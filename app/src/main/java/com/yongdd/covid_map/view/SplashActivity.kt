@@ -16,7 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @SuppressLint("CustomSplashScreen")
 @AndroidEntryPoint
-class SplashActivity : AppCompatActivity() {
+class SplashActivity : BaseActivity() {
 
     private lateinit var binding : ActivitySplashBinding
     private val vm : SplashViewModel by viewModels()
@@ -68,16 +68,6 @@ class SplashActivity : AppCompatActivity() {
                 if(count==10) vm.checkProcessing()
             }
         vm.receivedPageCount.observe(this,receivedPageCountObserver)
-    }
-
-    // status bar까지 풀스크린
-    private fun transparentStatusBar() {
-        if (Build.VERSION.SDK_INT >= 30) {
-            window.setDecorFitsSystemWindows(false)
-        } else {
-            window.decorView.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-        }
     }
 
 }
