@@ -1,8 +1,8 @@
-package com.yongdd.covid_map.api
+package com.yongdd.covid_map.model.repository
 
 import com.yongdd.covid_map.api.service.CenterService
 import com.yongdd.covid_map.model.data.Center
-import com.yongdd.covid_map.room.CenterDao
+import com.yongdd.covid_map.database.CenterDao
 import javax.inject.Inject
 
 class CenterRepository @Inject constructor(

@@ -7,7 +7,7 @@ import retrofit2.http.Query
 
 interface CenterService {
     // 예방접종센터 위치정보 API
-    @GET("/15077586/v1/centers")
+    @GET("15077586/v1/centers")
     suspend fun centerList(
         @Query("page") page: Int,
         @Query("perPage") size: Int

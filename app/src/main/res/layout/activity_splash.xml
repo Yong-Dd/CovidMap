@@ -1,35 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="vm"
+            type="com.yongdd.covid_map.viewModel.SplashViewModel" />
+    </data>
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.SplashActivity">
+    android:background="@color/mainGreen">
 
     <com.airbnb.lottie.LottieAnimationView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginBottom="10dp"
+        android:layout_width="135dp"
+        android:layout_height="200dp"
+        android:layout_marginBottom="30dp"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toTopOf="@+id/progressBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        app:lottie_rawRes="@raw/animation_download" />
+        app:lottie_rawRes="@raw/download_animation2" />
 
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
-        android:layout_height="10dp"
+        android:layout_height="15dp"
         android:layout_marginStart="40dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="40dp"
-        android:max="1000"
+        android:max="100"
         android:progressDrawable="@drawable/custom_progress_bar_black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:progress="500" />
+        android:progress="@{vm.progress}"
+        tools:progress="50" />
 </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

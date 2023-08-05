@@ -1,4 +1,4 @@
-package com.yongdd.covid_map.room
+package com.yongdd.covid_map.database
 
 import android.content.Context
 import androidx.room.Room
