@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">covid_map</string>
+    <string name="naver_client_id">r7lsbynrhv</string>
 </resources>
