@@ -62,7 +62,7 @@ class SplashViewModel @Inject constructor(
     // 페이지별 api 요청
     private fun controlListFromAPI() {
         CoroutineScope(Dispatchers.IO).launch {
-            (0..9).asFlow().collect{page ->
+            (1..10).asFlow().collect{page ->
                 getListFromAPI(page,null)
             }
         }
@@ -131,8 +131,12 @@ class SplashViewModel @Inject constructor(
             )
 
             CoroutineScope(Dispatchers.IO).launch {
-                if(listUpdate) repository.addCenterDao(center)
-                else repository.updateDao(center)
+                if(listUpdate) {
+                    repository.updateDao(center)
+                } else {
+                    repository.addCenterDao(center)
+
+                }
             }
         }
     }

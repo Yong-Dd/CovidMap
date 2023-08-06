@@ -22,4 +22,12 @@ data class Center(
     var sigungu: String,
     var updatedAt: String,
     var zipCode: String
-)
+) {
+    val markerColor : MarkerColor
+        get() = when(centerType) {
+                MarkerColor.RED.centerType -> MarkerColor.RED
+                MarkerColor.BLUE.centerType -> MarkerColor.BLUE
+                else -> MarkerColor.GREEN
+            }
+
+}

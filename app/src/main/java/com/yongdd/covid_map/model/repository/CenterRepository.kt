@@ -13,15 +13,15 @@ class CenterRepository @Inject constructor(
 
     // 전체 리스트 가져오기 (perPage:개수, 기본 개수 10개)
     suspend fun getCenterListFromAPI(page: Int, perPage: Int?) =
-        centerService.centerList(page, perPage?:10)
+        centerService.centerList(page, perPage ?: 10)
 
     // -----[dao]-----
 
     // 전체 리스트
-    fun getCenterListFromDao() : List<Center> = centerDao.getAllCenters()
+    fun getCenterListFromDao(): List<Center> = centerDao.getAllCenters()
 
     // db에 추가
-    fun addCenterDao(center: Center){
+    fun addCenterDao(center: Center) {
         centerDao.addCenter(center)
     }
 
@@ -31,6 +31,6 @@ class CenterRepository @Inject constructor(
     }
 
     // db 현재 개수
-    fun getAllCountDao() : Int = centerDao.getAllCount()
+    fun getAllCountDao(): Int = centerDao.getAllCount()
 
 }

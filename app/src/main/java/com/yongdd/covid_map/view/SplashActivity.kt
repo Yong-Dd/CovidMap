@@ -2,10 +2,7 @@ package com.yongdd.covid_map.view
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import com.yongdd.covid_map.databinding.ActivitySplashBinding
@@ -26,7 +23,7 @@ class SplashActivity : BaseActivity() {
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        transparentStatusBar()
+        fullscreenStatusBar(blackStatusBar = true)
         initVM()
         addObserver()
     }
@@ -39,7 +36,7 @@ class SplashActivity : BaseActivity() {
     private fun addObserver() {
         vm.viewEvent.eventObserve(this) {
             when (it) {
-                is SendToView.ChangeData -> {
+                is SendToView.SendData -> {
                     when(it.dataName) {
                         vm.INTERNET_CHECK -> {
                             // todo : 인터넷 체크 확인
