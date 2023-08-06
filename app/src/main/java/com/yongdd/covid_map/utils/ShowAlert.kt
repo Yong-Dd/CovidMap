@@ -23,6 +23,21 @@ class ShowAlert(val context: Context) {
         }
 
         builder.show()
-
     }
+
+    fun oneChoiceAlert(
+        title: String,
+        message:String,
+        positiveText: String,
+        positive: () -> Unit
+    ) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle(title)
+        builder.setMessage(message)
+        builder.setPositiveButton(positiveText) { _, _ ->
+            positive()
+        }
+        builder.show()
+    }
+
 }

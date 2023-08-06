@@ -81,7 +81,8 @@ class SplashViewModel @Inject constructor(
                 updateReceivedPage()
             }
             else -> {
-                // todo: 인터넷 상황 체크 처리 확인
+                _viewEvent.value = Event(SendToView.SendData(INTERNET_CHECK,0))
+
                 when(response.code()) {
                     // 서버에 문제가 생긴 경우 -> 1번 재요청
                     500 -> {

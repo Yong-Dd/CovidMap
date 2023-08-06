@@ -77,6 +77,9 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.retrofit2:converter-scalars:2.1.0")
 
+    // google 위치
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+
     // 권한 요청 (tedpermission)
     implementation("io.github.ParkSangGwon:tedpermission-normal:3.3.0")
 
