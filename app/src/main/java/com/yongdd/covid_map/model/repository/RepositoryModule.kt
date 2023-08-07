@@ -16,4 +16,5 @@ class RepositoryModule {
     @Provides
     fun provideCenterRepository(centerDao: CenterDao, centerService: CenterService) =
         CenterRepository(centerDao, centerService)
+
 }

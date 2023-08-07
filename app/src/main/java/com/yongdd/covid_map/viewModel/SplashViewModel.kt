@@ -16,7 +16,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.retry
+import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.launch
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,10 +35,6 @@ class SplashViewModel @Inject constructor(
     /*센터 리스트 업데이트 여부
 * (기존에 정보를 전체 갖고 있는 경우 업데이트)*/
     private var listUpdate = false
-
-    // dialog 등 띄우는 용
-    private val _alertEvent = MutableLiveData<Event<ShowAlert>>()
-    val alertEvent : LiveData<Event<ShowAlert>> get() = _alertEvent
 
     // 이벤트 전달 용
     private val _viewEvent = MutableLiveData<Event<SendToView>>()
@@ -51,12 +52,18 @@ class SplashViewModel @Inject constructor(
 
 
     init {
-        CoroutineScope(Dispatchers.IO).launch {
-            listUpdate = repository.getAllCountDao()>=100
-        }
-
+        checkTotalCount()
         moveProgressBar(2000,0)
         controlListFromAPI()
+    }
+
+    // db에 있는 총 개수 (100개 이상일 경우 api에서 불러와서 저장 시 update로)
+    private fun checkTotalCount() {
+        CoroutineScope(Dispatchers.IO).launch {
+            repository.centerListTotalCount.collect{ count->
+                listUpdate = count >= 100
+            }
+        }
     }
 
     // 페이지별 api 요청
@@ -73,37 +80,41 @@ class SplashViewModel @Inject constructor(
 
     // 페이지별 api 요청 처리
     private suspend fun getListFromAPI(page:Int, perPage:Int?) {
-        val response = repository.getCenterListFromAPI(page,perPage)
-
-        when(response.isSuccessful) {
-            true -> {
-                saveData(response.body()?.data)
+        repository.getCenterListFromAPI(page,perPage)
+            .catch {
                 updateReceivedPage()
             }
-            else -> {
-                _viewEvent.value = Event(SendToView.SendData(INTERNET_CHECK,0))
+            .collect{ response ->
+            when(response.isSuccessful) {
+                true -> {
+                    saveData(response.body()?.data)
+                    updateReceivedPage()
+                }
+                else -> {
+                    _viewEvent.value = Event(SendToView.SendData(INTERNET_CHECK,0))
 
-                when(response.code()) {
-                    // 서버에 문제가 생긴 경우 -> 1번 재요청
-                    500 -> {
-                        // 요청 처리한 것으로 넘김 (다시 받아오기 힘든 상황이라 추측) -> 차후 Activity에서 처리
-                        if((reRequest[page]?:0)>1){
-                            updateReceivedPage()
-                            return
+                    when(response.code()) {
+                        // 서버에 문제가 생긴 경우 -> 1번 재요청
+                        500 -> {
+                            // 요청 처리한 것으로 넘김 (다시 받아오기 힘든 상황이라 추측)
+                            if((reRequest[page]?:0)>1){
+                                updateReceivedPage()
+                                return@collect
+                            }
+
+                            getListFromAPI(page, perPage)
+                            reRequest[page] = (reRequest[page]?:0) +1
                         }
 
-                        getListFromAPI(page, perPage)
-                        reRequest[page] = (reRequest[page]?:0) +1
+                        else -> {
+                            // 요청 처리한 것으로 넘김 (다시 받아오기 힘든 상황)
+                            updateReceivedPage()
+                        }
                     }
 
-                    else -> {
-                        // 요청 처리한 것으로 넘김 (다시 받아오기 힘든 상황) -> 차후 Activity에서 처리
-                        updateReceivedPage()
-                    }
+                    Log.d(API_TAG,"api error $response / page $page")
+
                 }
-
-                Log.d(API_TAG,"api error $response / page $page")
-
             }
         }
     }

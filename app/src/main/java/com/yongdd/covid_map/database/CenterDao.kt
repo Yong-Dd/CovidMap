@@ -20,6 +20,6 @@ interface CenterDao {
     fun getAllCenters() : List<Center>
 
     @Query("SELECT COUNT(*) FROM Centers")
-    fun getAllCount() : Int
+    fun getTotalCount() : Int
 
 }

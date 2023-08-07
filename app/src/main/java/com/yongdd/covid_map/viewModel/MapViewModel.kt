@@ -1,5 +1,6 @@
 package com.yongdd.covid_map.viewModel
 
+import android.database.sqlite.SQLiteException
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -17,12 +18,14 @@ import com.yongdd.covid_map.model.data.Center
 import com.yongdd.covid_map.model.data.MarkerColor
 import com.yongdd.covid_map.model.repository.CenterRepository
 import com.yongdd.covid_map.utils.Event
+import com.yongdd.covid_map.utils.SendAlert
 import com.yongdd.covid_map.utils.SendToView
 import com.yongdd.covid_map.utils.ShowAlert
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.launch
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,8 +33,8 @@ class MapViewModel @Inject constructor(
     private val repository: CenterRepository
 ) : ViewModel() {
     // dialog 등 띄우는 용
-    private val _alertEvent = MutableLiveData<Event<ShowAlert>>()
-    val alertEvent : LiveData<Event<ShowAlert>> get() = _alertEvent
+    private val _alertEvent = MutableLiveData<Event<SendAlert>>()
+    val alertEvent : LiveData<Event<SendAlert>> get() = _alertEvent
 
     // 이벤트 전달 용
     private val _viewEvent = MutableLiveData<Event<SendToView>>()
@@ -41,27 +44,35 @@ class MapViewModel @Inject constructor(
     private val _clickedCenter = MutableLiveData<Center?>(null)
     val clickedCenter : LiveData<Center?> get() = _clickedCenter
 
-    // 클릭한 마커의 센터 정보 (null일 경우 클릭X)
+    // 센터 리스트
     private val _centerList = MutableLiveData<MutableList<Center>>()
     val centerList : LiveData<MutableList<Center>> get() = _centerList
 
+    private val MAP_VM = "mapViewModel" // log tag
 
+    val API_ERROR = "apiError"
     fun getListAndAddMarkers(naverMap: NaverMap) {
         viewModelScope.launch {
-            CoroutineScope(Dispatchers.IO).launch {
-                if(centerList.value.isNullOrEmpty()) {
-                    val dao = repository.getCenterListFromDao()
-                    _centerList.postValue(dao.toMutableList())
-                }
+            if(centerList.value.isNullOrEmpty()) {
+               repository.centerListFromDao
+                   .retryWhen { cause, attempt ->
+                       cause is SQLiteException && attempt < 2
+                   }
+                   .catch {
+                       _alertEvent.value = Event(SendAlert.ShowOneChoiceAlert(
+                           title = "안내",
+                           message = "정보를 가지고 오지 못했습니다😥/n잠시 후 다시 시도해 주세요!",
+                           positiveText = "확인"){})
+                       Log.d(MAP_VM,"centerListFromDao error ${it.printStackTrace()}")
+                   }
+                   .collect{list ->
+                   _centerList.value = list.toMutableList()
+               }
+            }
 
-                viewModelScope.launch {
-                    Log.d("map22","list ${centerList.value?.size}")
-                    centerList.value?.forEachIndexed { index, center ->
-                        if(index==0) moveCameraUpdate(naverMap,center.lat.toDouble(),center.lng.toDouble())
-                        addMarker(naverMap, center)
-                    }
-                }
-
+            centerList.value?.forEachIndexed { index, center ->
+                if(index==0) moveCameraUpdate(naverMap,center.lat.toDouble(),center.lng.toDouble())
+                addMarker(naverMap, center)
             }
         }
     }

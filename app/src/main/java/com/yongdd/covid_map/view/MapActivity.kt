@@ -30,6 +30,7 @@ import com.naver.maps.map.OnMapReadyCallback
 import com.yongdd.covid_map.R
 import com.yongdd.covid_map.databinding.ActivityMapBinding
 import com.yongdd.covid_map.utils.DisplayUtils
+import com.yongdd.covid_map.utils.SendAlert
 import com.yongdd.covid_map.utils.SendToView
 import com.yongdd.covid_map.utils.ShowAlert
 import com.yongdd.covid_map.utils.eventObserve
@@ -77,7 +78,23 @@ class MapActivity : BaseActivity(), OnMapReadyCallback {
                         vm.MOVE_CURRENT_LOCATION -> {
                             locationPermissionCheck()
                         }
+                        vm.API_ERROR -> {
+
+                        }
                     }
+                }
+                else -> {}
+            }
+        }
+        vm.alertEvent.eventObserve(this) {
+            when (it) {
+                is SendAlert.ShowOneChoiceAlert -> {
+                    ShowAlert(this).oneChoiceAlert(
+                        title = it.title,
+                        message = it.message,
+                        positiveText = it.positiveText,
+                        positive = it.positive
+                    )
                 }
                 else -> {}
             }
