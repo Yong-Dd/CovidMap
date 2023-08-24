@@ -22,6 +22,8 @@ import com.yongdd.covid_map.utils.SendAlert
 import com.yongdd.covid_map.utils.SendToView
 import com.yongdd.covid_map.utils.ShowAlert
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.launch
@@ -41,12 +43,12 @@ class MapViewModel @Inject constructor(
     val viewEvent : LiveData<Event<SendToView>> get() = _viewEvent
 
     // 클릭한 마커의 센터 정보 (null일 경우 클릭X)
-    private val _clickedCenter = MutableLiveData<Center?>(null)
-    val clickedCenter : LiveData<Center?> get() = _clickedCenter
+    private val _clickedCenter = MutableStateFlow<Center?>(null)
+    val clickedCenter : StateFlow<Center?> get() = _clickedCenter
 
     // 센터 리스트
-    private val _centerList = MutableLiveData<MutableList<Center>>()
-    val centerList : LiveData<MutableList<Center>> get() = _centerList
+    private val _centerList = MutableStateFlow<MutableList<Center>>(mutableListOf())
+    val centerList : StateFlow<MutableList<Center>> get() = _centerList
 
     private val MAP_VM = "mapViewModel" // log tag
 

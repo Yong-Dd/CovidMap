@@ -10,18 +10,13 @@ import com.yongdd.covid_map.model.data.Center
 import com.yongdd.covid_map.model.data.CenterInfo
 import com.yongdd.covid_map.utils.Event
 import com.yongdd.covid_map.utils.SendToView
-import com.yongdd.covid_map.utils.ShowAlert
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.retry
-import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.launch
-import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
